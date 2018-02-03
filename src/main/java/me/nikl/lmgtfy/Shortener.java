@@ -1,12 +1,12 @@
 package me.nikl.lmgtfy;
 
-import org.bukkit.scheduler.BukkitRunnable;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Created by nikl on 19.12.17.
@@ -14,9 +14,10 @@ import java.net.URLEncoder;
  * Send requests to a shortening service and catch the shortened link
  */
 public class Shortener {
-    private Main plugin;
+    private static Main plugin;
 
-    public Shortener(Main plugin){
+    @SuppressWarnings("static-access")
+	public Shortener(Main plugin){
         this.plugin = plugin;
     }
 
@@ -28,17 +29,16 @@ public class Shortener {
         void success(T t);
         void fail(T t);
     }
-
-    private class Lookup extends BukkitRunnable{
-        private final static String REQ = "https://is.gd/create.php?format=simple&url=";
+   
+    private static class Lookup extends BukkitRunnable{
+        private final static String REQ = (plugin.getConfig().getString("Interface"));
         private String link;
         private Callable<String> callable;
-
+        
         Lookup(String link, Callable<String> callable){
             this.link = link;
             this.callable = callable;
         }
-
         @Override
         public void run() {
             try {
@@ -49,7 +49,6 @@ public class Shortener {
                 callable.fail(link);
             }
         }
-
         private String shorten(String longUrl) throws IOException {
             String isgdUrlLookup = REQ + URLEncoder.encode(longUrl, "UTF-8");
             BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(isgdUrlLookup).openStream()));
