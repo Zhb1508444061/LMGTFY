@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 public class Main extends JavaPlugin {
 
     static boolean useShortener = true;
+    public static Main plugin = null;
 
     private Language lang;
     private FileConfiguration config;
